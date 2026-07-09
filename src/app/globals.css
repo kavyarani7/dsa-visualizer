@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 antialiased;
+}
+
+/* Minimal markdown styling for problem descriptions. */
+.prose-dsa h1,
+.prose-dsa h2,
+.prose-dsa h3 {
+  @apply font-semibold text-slate-100 mt-4 mb-2;
+}
+.prose-dsa p {
+  @apply my-2 leading-relaxed text-slate-300;
+}
+.prose-dsa code {
+  @apply bg-slate-800 text-emerald-300 px-1 py-0.5 rounded text-sm font-mono;
+}
+.prose-dsa pre {
+  @apply bg-slate-900 border border-slate-800 rounded-lg p-3 my-3 overflow-x-auto text-sm;
+}
+.prose-dsa pre code {
+  @apply bg-transparent p-0 text-slate-200;
+}
+.prose-dsa strong {
+  @apply text-slate-100 font-semibold;
+}

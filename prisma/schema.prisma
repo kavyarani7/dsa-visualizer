@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Problem {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  difficulty  String   // "Easy" | "Medium" | "Hard"
+  description String   // markdown
+  // The function name the judge will call in the user's submission.
+  functionName String
+  // Hint for the expected algorithm pattern (used only for seeding/demo copy;
+  // the pipeline still detects the real pattern from the submitted code).
+  patternHint String   // "two_pointer" | "bfs" | "unknown"
+  starterCode String
+
+  testCases   TestCase[]
+  submissions Submission[]
+
+  createdAt   DateTime @default(now())
+}
+
+model TestCase {
+  id         String  @id @default(cuid())
+  problemId  String
+  problem    Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  // JSON-encoded array of arguments passed to the function, in order.
+  inputJson  String
+  // JSON-encoded expected return value.
+  expectedJson String
+  // Whether this case is shown to the user (sample) or hidden.
+  isSample   Boolean @default(true)
+  ordinal    Int     @default(0)
+}
+
+model Submission {
+  id         String   @id @default(cuid())
+  problemId  String
+  problem    Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  sourceCode String
+  language   String   @default("javascript")
+
+  // "pending" | "passed" | "failed" | "error"
+  status     String   @default("pending")
+  // JSON-encoded TestRunResult[] (per-case results).
+  resultsJson String  @default("[]")
+  // JSON-encoded VisualizationPayload produced by the pipeline (null until run).
+  pipelineJson String?
+
+  createdAt  DateTime @default(now())
+}
