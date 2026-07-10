@@ -32,10 +32,15 @@ export interface SandboxResult {
   engine: "isolated-vm" | "vm";
 }
 
-// Cache the isolated-vm module resolution so we only probe once.
-let ivmModule: typeof import("isolated-vm") | null | undefined;
+// isolated-vm is an OPTIONAL native addon that may be absent (it isn't installed
+// on Vercel, and it segfaults on some local builds). Type it loosely so the
+// build never needs its type declarations, and load it purely at runtime.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type IvmModule = any;
 
-function loadIvm(): typeof import("isolated-vm") | null {
+let ivmModule: IvmModule | null | undefined;
+
+function loadIvm(): IvmModule | null {
   // Never load isolated-vm unless explicitly opted in (see header note).
   if (process.env.SANDBOX_ENGINE !== "isolated-vm") return null;
   if (ivmModule !== undefined) return ivmModule;
