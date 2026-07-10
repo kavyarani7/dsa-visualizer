@@ -1,6 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
+// Seed over the direct connection when available (the pooled/transaction URL is
+// meant for the serverless app runtime, not bulk DDL/writes).
+const prisma = new PrismaClient({
+  datasources: { db: { url: process.env.DIRECT_URL || process.env.DATABASE_URL } },
+});
 
 interface SeedCase {
   input: unknown[];

@@ -38,14 +38,18 @@ degrade to deterministic behavior when no `ANTHROPIC_API_KEY` is set.
 ## Tech stack
 
 Next.js (App Router) · TypeScript · Tailwind · Monaco editor ·
-Prisma + SQLite · LangGraph.js · Babel (AST instrumentation)
+Prisma + Postgres (Supabase) · LangGraph.js · Babel (AST instrumentation)
 
 ## Local development
 
+Requires a Postgres database (a free [Supabase](https://supabase.com) project
+works for both local and prod — see [DEPLOY.md](DEPLOY.md)).
+
 ```bash
 npm install
-cp .env.example .env      # optional: add ANTHROPIC_API_KEY to enable LLM nodes
-npm run db:reset          # create the SQLite DB and seed problems
+cp .env.example .env      # fill in DATABASE_URL / DIRECT_URL (+ optional ANTHROPIC_API_KEY)
+npx prisma db push        # create the tables
+npm run db:seed           # insert the 5 seed problems
 npm run dev               # http://localhost:3000
 ```
 
@@ -64,5 +68,10 @@ This is an MVP built to prove the architecture, with deliberate boundaries:
   with a timeout — fine for local use, but `vm` is *not* a security boundary.
   Do not expose a public instance that runs untrusted code without adding real
   isolation (containers/gVisor) and rate limiting.
-- **SQLite is for local dev.** A serverless deploy needs a hosted database (or a
-  host with a persistent disk).
+- **Postgres everywhere.** Local and prod both use Postgres (Supabase); there's
+  no SQLite fallback anymore.
+
+## Deploying
+
+See [DEPLOY.md](DEPLOY.md) — the app deploys to Vercel (UI + API together) with a
+Supabase Postgres database.

@@ -3,6 +3,9 @@ import { runSubmission, type RunMode } from "@/lib/submissionService";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// The judge + LangGraph pipeline (+ optional LLM calls) can take several
+// seconds; give the serverless function headroom beyond the 10s default.
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   let body: { problemId?: string; sourceCode?: string; mode?: RunMode };
