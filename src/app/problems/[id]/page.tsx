@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function ProblemPage({ params }: { params: { id: string } }) {
   const problem = await prisma.problem.findFirst({
     where: { OR: [{ id: params.id }, { slug: params.id }] },
+    include: { topics: { orderBy: { ordinal: "asc" }, select: { slug: true, name: true } } },
   });
   if (!problem) notFound();
 
@@ -29,6 +30,7 @@ export default async function ProblemPage({ params }: { params: { id: string } }
           patternHint: problem.patternHint,
           starterCode: problem.starterCode,
           totalCases,
+          topics: problem.topics,
         }}
       />
     </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { SubmissionStatus, TestRunResult, VisualizationPayload } from "@/lib/types";
 import CodeEditor from "./CodeEditor";
 import TestResults from "./TestResults";
@@ -17,6 +18,7 @@ interface ProblemProps {
   patternHint: string;
   starterCode: string;
   totalCases: number;
+  topics: { slug: string; name: string }[];
 }
 
 interface RunResponse {
@@ -82,6 +84,19 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
             function <span className="text-emerald-300">{problem.functionName}</span>(…) ·{" "}
             {problem.totalCases} test cases
           </div>
+          {problem.topics.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {problem.topics.map((t) => (
+                <Link
+                  key={t.slug}
+                  href={`/topics/${t.slug}`}
+                  className="text-[11px] px-2 py-0.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-300 transition-colors"
+                >
+                  {t.name}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Tab bar */}
