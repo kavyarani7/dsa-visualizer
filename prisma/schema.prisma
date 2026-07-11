@@ -28,8 +28,21 @@ model Problem {
 
   testCases   TestCase[]
   submissions Submission[]
+  // A problem can belong to many topics (e.g. Number of Islands → BFS & DFS).
+  topics      Topic[]  @relation("ProblemTopics")
 
   createdAt   DateTime @default(now())
+}
+
+model Topic {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  name      String
+  // Optional one-line blurb shown on the topic.
+  blurb     String?
+  ordinal   Int       @default(0)
+  problems  Problem[] @relation("ProblemTopics")
+  createdAt DateTime  @default(now())
 }
 
 model TestCase {

@@ -17,9 +17,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/" className="font-semibold text-lg tracking-tight">
                 <span className="text-emerald-400">DSA</span> Visualizer
               </Link>
-              <span className="text-xs text-slate-400">
-                submit correct JS → watch it animate
-              </span>
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-slate-400 hidden sm:inline">
+                  submit correct JS → watch it animate
+                </span>
+                <Link href="/admin" className="text-xs text-slate-400 hover:text-slate-200">
+                  Admin
+                </Link>
+              </div>
             </div>
           </header>
           <main className="flex-1">{children}</main>

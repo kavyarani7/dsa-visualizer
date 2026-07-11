@@ -21,11 +21,38 @@ interface SeedProblem {
   description: string;
   starterCode: string;
   cases: SeedCase[];
+  topics: string[]; // topic slugs
 }
+
+// The full curriculum of topics (lists). Seeded even when empty so the lists
+// exist and can be filled in from the admin UI over time.
+const TOPICS: { slug: string; name: string; ordinal: number }[] = [
+  { slug: "two-pointers", name: "Two Pointers", ordinal: 1 },
+  { slug: "sliding-window", name: "Sliding Window", ordinal: 2 },
+  { slug: "fast-slow-pointers", name: "Fast & Slow Pointers", ordinal: 3 },
+  { slug: "hashing", name: "Hash Map / Hash Set", ordinal: 4 },
+  { slug: "binary-search", name: "Binary Search", ordinal: 5 },
+  { slug: "sort-first", name: "Sort-First Strategy", ordinal: 6 },
+  { slug: "monotonic-stack", name: "Monotonic Stack", ordinal: 7 },
+  { slug: "monotonic-deque", name: "Monotonic Deque", ordinal: 8 },
+  { slug: "bfs", name: "BFS", ordinal: 9 },
+  { slug: "dfs", name: "DFS", ordinal: 10 },
+  { slug: "backtracking", name: "Backtracking", ordinal: 11 },
+  { slug: "union-find", name: "Union-Find", ordinal: 12 },
+  { slug: "topological-sort", name: "Topological Sort", ordinal: 13 },
+  { slug: "dijkstra", name: "Dijkstra's Algorithm", ordinal: 14 },
+  { slug: "dynamic-programming", name: "Dynamic Programming", ordinal: 15 },
+  { slug: "greedy", name: "Greedy", ordinal: 16 },
+  { slug: "trie", name: "Trie", ordinal: 17 },
+  { slug: "heap", name: "Heap / Priority Queue", ordinal: 18 },
+  { slug: "bit-manipulation", name: "Bit Manipulation", ordinal: 19 },
+  { slug: "prefix-sum", name: "Prefix Sum", ordinal: 20 },
+];
 
 const problems: SeedProblem[] = [
   {
     slug: "two-sum-ii",
+    topics: ["two-pointers"],
     title: "Two Sum II - Input Array Is Sorted",
     difficulty: "Medium",
     functionName: "twoSum",
@@ -62,6 +89,7 @@ Output: [1,2]
   },
   {
     slug: "valid-palindrome",
+    topics: ["two-pointers"],
     title: "Valid Palindrome",
     difficulty: "Easy",
     functionName: "isPalindrome",
@@ -95,6 +123,7 @@ Output: true
   },
   {
     slug: "container-with-most-water",
+    topics: ["two-pointers"],
     title: "Container With Most Water",
     difficulty: "Medium",
     functionName: "maxArea",
@@ -129,6 +158,7 @@ Output: 49
   },
   {
     slug: "number-of-islands",
+    topics: ["bfs", "dfs"],
     title: "Number of Islands",
     difficulty: "Medium",
     functionName: "numIslands",
@@ -206,6 +236,7 @@ Output: 3
   },
   {
     slug: "rotting-oranges",
+    topics: ["bfs"],
     title: "Rotting Oranges",
     difficulty: "Medium",
     functionName: "orangesRotting",
@@ -255,14 +286,33 @@ Output: 4
 
 async function main() {
   console.log("Seeding database…");
-  // Idempotent: clear and re-seed.
-  await prisma.submission.deleteMany();
-  await prisma.testCase.deleteMany();
-  await prisma.problem.deleteMany();
 
+  // 1. Upsert every topic (idempotent — safe to re-run).
+  for (const t of TOPICS) {
+    await prisma.topic.upsert({
+      where: { slug: t.slug },
+      update: { name: t.name, ordinal: t.ordinal },
+      create: { slug: t.slug, name: t.name, ordinal: t.ordinal },
+    });
+  }
+  console.log(`  ✓ ${TOPICS.length} topics`);
+
+  // 2. Upsert problems. Submissions are never touched; test cases are derived
+  //    data, so we replace them, and topic links are re-set each run.
   for (const p of problems) {
-    const created = await prisma.problem.create({
-      data: {
+    const topicConnect = p.topics.map((slug) => ({ slug }));
+    const problem = await prisma.problem.upsert({
+      where: { slug: p.slug },
+      update: {
+        title: p.title,
+        difficulty: p.difficulty,
+        description: p.description,
+        functionName: p.functionName,
+        patternHint: p.patternHint,
+        starterCode: p.starterCode,
+        topics: { set: topicConnect },
+      },
+      create: {
         slug: p.slug,
         title: p.title,
         difficulty: p.difficulty,
@@ -270,18 +320,21 @@ async function main() {
         functionName: p.functionName,
         patternHint: p.patternHint,
         starterCode: p.starterCode,
+        topics: { connect: topicConnect },
       },
     });
+
+    await prisma.testCase.deleteMany({ where: { problemId: problem.id } });
     await prisma.testCase.createMany({
       data: p.cases.map((c, i) => ({
-        problemId: created.id,
+        problemId: problem.id,
         inputJson: JSON.stringify(c.input),
         expectedJson: JSON.stringify(c.expected),
         isSample: c.isSample ?? false,
         ordinal: i,
       })),
     });
-    console.log(`  ✓ ${p.title} (${p.cases.length} cases)`);
+    console.log(`  ✓ ${p.title} (${p.cases.length} cases, topics: ${p.topics.join(", ")})`);
   }
   console.log("Done.");
 }
