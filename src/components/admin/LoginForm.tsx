@@ -41,13 +41,13 @@ export default function LoginForm() {
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Admin password"
         autoFocus
-        className="w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+        className="w-full rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500"
       />
       {error && <div className="text-sm text-rose-300">{error}</div>}
       <button
         type="submit"
         disabled={busy || !password}
-        className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm font-semibold disabled:opacity-50"
+        className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-semibold disabled:opacity-50"
       >
         {busy ? "Signing in…" : "Sign in"}
       </button>

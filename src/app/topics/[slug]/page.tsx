@@ -19,29 +19,29 @@ export default async function TopicPage({ params }: { params: { slug: string } }
 
   return (
     <div className="max-w-[1600px] mx-auto px-6 py-8">
-      <Link href="/" className="text-sm text-slate-400 hover:text-slate-200">
+      <Link href="/" className="text-sm text-zinc-400 hover:text-zinc-200">
         ← All topics
       </Link>
       <h1 className="text-2xl font-semibold mt-3 mb-1">{topic.name}</h1>
-      <p className="text-slate-400 text-sm mb-6">
+      <p className="text-zinc-400 text-sm mb-6">
         {topic.problems.length} {topic.problems.length === 1 ? "problem" : "problems"}
         {topic.blurb ? ` · ${topic.blurb}` : ""}
       </p>
 
       {topic.problems.length === 0 ? (
-        <div className="text-sm text-slate-400 bg-slate-800/40 border border-slate-700 rounded-md p-4">
+        <div className="text-sm text-zinc-400 bg-zinc-800/40 border border-zinc-700 rounded-md p-4">
           No problems in this list yet. Add one from the admin area.
         </div>
       ) : (
-        <div className="overflow-hidden rounded-xl border border-slate-800 divide-y divide-slate-800">
+        <div className="overflow-hidden rounded-xl border border-zinc-800 divide-y divide-zinc-800">
           {topic.problems.map((p) => (
             <Link
               key={p.id}
               href={`/problems/${p.slug}`}
-              className="flex items-center justify-between px-4 py-3 hover:bg-slate-900/60 transition-colors"
+              className="flex items-center justify-between px-4 py-3 hover:bg-zinc-800/50 transition-colors"
             >
               <span className="font-medium">{p.title}</span>
-              <span className={`text-sm font-medium ${difficultyColor[p.difficulty] ?? "text-slate-400"}`}>
+              <span className={`text-sm font-medium ${difficultyColor[p.difficulty] ?? "text-zinc-400"}`}>
                 {p.difficulty}
               </span>
             </Link>

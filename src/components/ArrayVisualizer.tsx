@@ -23,7 +23,7 @@ export default function ArrayVisualizer({
   const rightStyle = actorConfig.roleMapping.right ?? "arrow";
 
   if (cells.length === 0) {
-    return <div className="text-sm text-slate-400">No array data for this step.</div>;
+    return <div className="text-sm text-zinc-400">No array data for this step.</div>;
   }
 
   return (
@@ -58,12 +58,12 @@ export default function ArrayVisualizer({
                       : isLeft
                         ? "bg-sky-500/20 border-sky-400 text-sky-200"
                         : "bg-fuchsia-500/20 border-fuchsia-400 text-fuchsia-200"
-                    : "bg-slate-800/60 border-slate-700 text-slate-300",
+                    : "bg-zinc-800/60 border-zinc-700 text-zinc-300",
                 ].join(" ")}
               >
                 {c}
               </div>
-              <div className="text-[10px] text-slate-400 tabular-nums">{i}</div>
+              <div className="text-[10px] text-zinc-400 tabular-nums">{i}</div>
             </div>
           );
         })}

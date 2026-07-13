@@ -44,7 +44,7 @@ export default function GridVisualizer({
 }) {
   const grid = Array.isArray(sampleInput?.[0]) ? (sampleInput![0] as unknown[][]) : null;
   if (!grid || !Array.isArray(grid[0])) {
-    return <div className="text-sm text-slate-400">No grid data to render.</div>;
+    return <div className="text-sm text-zinc-400">No grid data to render.</div>;
   }
 
   const actors = event?.actors ?? {};
@@ -68,7 +68,7 @@ export default function GridVisualizer({
             const isQueued = queued.has(k);
             const isVisited = visited.has(k);
 
-            let cls = "bg-slate-800/50 border-slate-700 text-slate-400";
+            let cls = "bg-zinc-800/50 border-zinc-700 text-zinc-400";
             if (isVisited) cls = "bg-emerald-500/20 border-emerald-500/40 text-emerald-200";
             if (isQueued) cls = "bg-sky-500/20 border-sky-400 text-sky-200";
             if (isCurrent) cls = "bg-amber-500/30 border-amber-400 text-amber-100 ring-2 ring-amber-400";
@@ -86,15 +86,15 @@ export default function GridVisualizer({
         )}
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-3 text-[11px] text-slate-400">
+      <div className="mt-3 flex flex-wrap gap-3 text-[11px] text-zinc-400">
         <Legend cls="bg-amber-500/30 border-amber-400" label="current" />
         <Legend cls="bg-sky-500/20 border-sky-400" label="in queue" />
         <Legend cls="bg-emerald-500/20 border-emerald-500/40" label="visited" />
       </div>
 
       {/* Queue readout */}
-      <div className="mt-3 text-xs text-slate-400">
-        <span className="text-slate-400">queue: </span>
+      <div className="mt-3 text-xs text-zinc-400">
+        <span className="text-zinc-400">queue: </span>
         <span className="font-mono">
           [{Array.isArray(actors.queue) ? (actors.queue as unknown[]).map((e) => JSON.stringify(e)).join(", ") : ""}]
         </span>

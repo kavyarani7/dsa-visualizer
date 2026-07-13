@@ -43,15 +43,15 @@ export default function TraceVisualizer({ visualization }: { visualization: Visu
   const current = canAnimate ? trace[Math.min(step, total - 1)] : null;
 
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-4">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-800/40 p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold">Visualization</span>
-          <span className="text-[11px] px-2 py-0.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300">
+          <span className="text-[11px] px-2 py-0.5 rounded-full border border-zinc-700 bg-zinc-800 text-zinc-300">
             {algoLabel[detectedAlgorithm] ?? detectedAlgorithm}
           </span>
           {detectedAlgorithm !== "unknown" && (
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-zinc-400">
               detected via {detectionMethod || "static"} · {(detectionConfidence * 100).toFixed(0)}%
             </span>
           )}
@@ -59,16 +59,16 @@ export default function TraceVisualizer({ visualization }: { visualization: Visu
       </div>
 
       {!canAnimate ? (
-        <div className="text-sm text-slate-400 bg-slate-800/40 rounded-md p-4">
+        <div className="text-sm text-zinc-400 bg-zinc-800/40 rounded-md p-4">
           {visualization.unsupportedReason ??
             "No animation available for this submission."}
-          <div className="text-xs text-slate-400 mt-1">
+          <div className="text-xs text-zinc-400 mt-1">
             Test results above are still valid — only the step-by-step animation is unavailable.
           </div>
         </div>
       ) : (
         <>
-          <div className="rounded-md bg-slate-950/40 border border-slate-800/60 px-3">
+          <div className="rounded-md bg-zinc-950/40 border border-zinc-800/60 px-3">
             {detectedAlgorithm === "two_pointer" ? (
               <ArrayVisualizer event={current} actorConfig={visualization.actorConfig} />
             ) : (
@@ -106,9 +106,9 @@ export default function TraceVisualizer({ visualization }: { visualization: Visu
       )}
 
       {explanation.length > 0 && (
-        <div className="mt-4 border-t border-slate-800 pt-3">
-          <div className="text-xs font-semibold text-slate-400 mb-1">How it works</div>
-          <ul className="list-disc list-inside space-y-1 text-xs text-slate-300">
+        <div className="mt-4 border-t border-zinc-800 pt-3">
+          <div className="text-xs font-semibold text-zinc-400 mb-1">How it works</div>
+          <ul className="list-disc list-inside space-y-1 text-xs text-zinc-300">
             {explanation.map((e, i) => (
               <li key={i}>{e}</li>
             ))}

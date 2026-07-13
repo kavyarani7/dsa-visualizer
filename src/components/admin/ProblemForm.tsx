@@ -28,7 +28,7 @@ interface CaseRow {
 }
 
 const inputCls =
-  "w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500";
+  "w-full rounded-md bg-zinc-800 border border-zinc-700 px-3 py-2 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500";
 
 /** Pull the first function name out of starter code, e.g. "function maxProfit(" → "maxProfit". */
 function deriveFnName(code: string): string | null {
@@ -165,7 +165,7 @@ export default function ProblemForm({
                 className={`text-xs px-2.5 py-1 rounded-full border ${
                   on
                     ? "bg-emerald-500/20 border-emerald-500/50 text-emerald-200"
-                    : "bg-slate-800 border-slate-700 text-slate-300 hover:text-slate-100"
+                    : "bg-zinc-800 border-zinc-700 text-zinc-300 hover:text-zinc-100"
                 }`}
               >
                 {t.name}
@@ -199,18 +199,18 @@ export default function ProblemForm({
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium text-slate-200">Test cases</label>
+          <label className="text-sm font-medium text-zinc-200">Test cases</label>
           <button
             type="button"
             onClick={() => setCases((cs) => [...cs, { inputJson: "", expectedJson: "", isSample: false }])}
-            className="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200"
+            className="text-xs px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
           >
             + Add case
           </button>
         </div>
-        <p className="text-xs text-slate-400 mb-2">
-          <span className="text-slate-300">input</span> is a JSON array of arguments (e.g.{" "}
-          <code className="text-emerald-300">[[2,7,11,15], 9]</code>); <span className="text-slate-300">expected</span> is the JSON return value (e.g.{" "}
+        <p className="text-xs text-zinc-400 mb-2">
+          <span className="text-zinc-300">input</span> is a JSON array of arguments (e.g.{" "}
+          <code className="text-emerald-300">[[2,7,11,15], 9]</code>); <span className="text-zinc-300">expected</span> is the JSON return value (e.g.{" "}
           <code className="text-emerald-300">[1,2]</code>).
         </p>
         <div className="space-y-2">
@@ -218,11 +218,11 @@ export default function ProblemForm({
             <div key={i} className="grid grid-cols-[1fr_1fr_auto_auto] gap-2 items-center">
               <input className={`${inputCls} font-mono text-xs`} value={c.inputJson} onChange={(e) => updateCase(i, { inputJson: e.target.value })} placeholder="[[2,7,11,15], 9]" />
               <input className={`${inputCls} font-mono text-xs`} value={c.expectedJson} onChange={(e) => updateCase(i, { expectedJson: e.target.value })} placeholder="[1,2]" />
-              <label className="text-xs text-slate-400 flex items-center gap-1 whitespace-nowrap">
+              <label className="text-xs text-zinc-400 flex items-center gap-1 whitespace-nowrap">
                 <input type="checkbox" checked={c.isSample} onChange={(e) => updateCase(i, { isSample: e.target.checked })} className="accent-emerald-500" />
                 sample
               </label>
-              <button type="button" onClick={() => setCases((cs) => cs.filter((_, j) => j !== i))} className="text-xs text-slate-500 hover:text-rose-300 px-1" title="Remove">
+              <button type="button" onClick={() => setCases((cs) => cs.filter((_, j) => j !== i))} className="text-xs text-zinc-500 hover:text-rose-300 px-1" title="Remove">
                 ✕
               </button>
             </div>
@@ -237,10 +237,10 @@ export default function ProblemForm({
       )}
 
       <div className="flex items-center gap-2">
-        <button type="submit" disabled={busy} className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm font-semibold disabled:opacity-50">
+        <button type="submit" disabled={busy} className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-semibold disabled:opacity-50">
           {busy ? "Saving…" : mode === "edit" ? "Save changes" : "Create problem"}
         </button>
-        <button type="button" onClick={() => router.push("/admin")} className="px-3 py-2 rounded-md text-sm text-slate-300 hover:text-slate-100">
+        <button type="button" onClick={() => router.push("/admin")} className="px-3 py-2 rounded-md text-sm text-zinc-300 hover:text-zinc-100">
           Cancel
         </button>
       </div>
@@ -251,7 +251,7 @@ export default function ProblemForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <label className="block">
-      <span className="block text-sm font-medium text-slate-200 mb-1">{label}</span>
+      <span className="block text-sm font-medium text-zinc-200 mb-1">{label}</span>
       {children}
     </label>
   );

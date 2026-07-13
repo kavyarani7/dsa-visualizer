@@ -63,10 +63,10 @@ export default function AdminDashboard({
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Admin</h1>
         <div className="flex items-center gap-3">
-          <Link href="/admin/problems/new" className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm font-semibold">
+          <Link href="/admin/problems/new" className="px-4 py-2 rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-semibold">
             + New problem
           </Link>
-          <button onClick={logout} className="text-sm text-slate-300 hover:text-slate-100">
+          <button onClick={logout} className="text-sm text-zinc-300 hover:text-zinc-100">
             Sign out
           </button>
         </div>
@@ -74,47 +74,47 @@ export default function AdminDashboard({
 
       <div className="grid lg:grid-cols-3 gap-6 items-start">
         {/* Topics */}
-        <div className="lg:col-span-1 rounded-xl border border-slate-800 bg-slate-900/30 p-4">
+        <div className="lg:col-span-1 rounded-xl border border-zinc-800 bg-zinc-800/40 p-4">
           <h2 className="text-sm font-semibold mb-3">Lists / topics ({topics.length})</h2>
           <form onSubmit={addTopic} className="flex gap-2 mb-3">
             <input
               value={newTopic}
               onChange={(e) => setNewTopic(e.target.value)}
               placeholder="New topic name"
-              className="flex-1 rounded-md bg-slate-800 border border-slate-700 px-2.5 py-1.5 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+              className="flex-1 rounded-md bg-zinc-800 border border-zinc-700 px-2.5 py-1.5 text-sm text-zinc-100 focus:outline-none focus:border-emerald-500"
             />
-            <button type="submit" disabled={busy} className="px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-sm text-slate-100 disabled:opacity-50">
+            <button type="submit" disabled={busy} className="px-3 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-sm text-zinc-100 disabled:opacity-50">
               Add
             </button>
           </form>
           {error && <div className="text-xs text-rose-300 mb-2">{error}</div>}
-          <ul className="divide-y divide-slate-800/60 text-sm">
+          <ul className="divide-y divide-zinc-800/60 text-sm">
             {topics.map((t) => (
               <li key={t.slug} className="flex items-center justify-between py-1.5">
-                <Link href={`/topics/${t.slug}`} className="text-slate-200 hover:text-emerald-300">
+                <Link href={`/topics/${t.slug}`} className="text-zinc-200 hover:text-emerald-300">
                   {t.name}
                 </Link>
-                <span className="text-xs text-slate-400 tabular-nums">{t.count}</span>
+                <span className="text-xs text-zinc-400 tabular-nums">{t.count}</span>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Problems */}
-        <div className="lg:col-span-2 rounded-xl border border-slate-800 bg-slate-900/30 overflow-hidden">
+        <div className="lg:col-span-2 rounded-xl border border-zinc-800 bg-zinc-800/40 overflow-hidden">
           <h2 className="text-sm font-semibold px-4 pt-4 pb-2">Problems ({problems.length})</h2>
-          <ul className="divide-y divide-slate-800/60">
+          <ul className="divide-y divide-zinc-800/60">
             {problems.map((p) => (
               <li key={p.id} className="flex items-center justify-between px-4 py-2.5">
                 <div className="min-w-0">
-                  <div className="text-sm text-slate-100 truncate">{p.title}</div>
-                  <div className="text-xs text-slate-400 truncate">
+                  <div className="text-sm text-zinc-100 truncate">{p.title}</div>
+                  <div className="text-xs text-zinc-400 truncate">
                     {p.difficulty}
                     {p.topics.length > 0 && <span> · {p.topics.join(", ")}</span>}
                   </div>
                 </div>
                 <div className="flex items-center gap-3 shrink-0 text-xs">
-                  <Link href={`/problems/${p.slug}`} className="text-slate-400 hover:text-slate-200">
+                  <Link href={`/problems/${p.slug}`} className="text-zinc-400 hover:text-zinc-200">
                     view
                   </Link>
                   <Link href={`/admin/problems/${p.id}/edit`} className="text-emerald-400 hover:text-emerald-300">

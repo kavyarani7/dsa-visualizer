@@ -68,7 +68,7 @@ export default function VisualizerPanel({
 
   if (!hasAlgorithm && !hasDebugger) {
     return (
-      <div className="text-sm text-slate-400">
+      <div className="text-sm text-zinc-400">
         {viz.unsupportedReason ?? "No visualization available."}
       </div>
     );
@@ -79,12 +79,12 @@ export default function VisualizerPanel({
       {/* Which input to simulate */}
       {cases.length > 0 && (
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <label className="text-xs text-slate-400">Simulate input:</label>
+          <label className="text-xs text-zinc-400">Simulate input:</label>
           <select
             value={selected}
             onChange={(e) => simulate(Number(e.target.value))}
             disabled={simBusy}
-            className="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-100 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
+            className="bg-zinc-800 border border-zinc-700 rounded px-2 py-1 text-xs text-zinc-100 focus:outline-none focus:border-emerald-500 disabled:opacity-50"
           >
             {cases.map((c, i) => (
               <option key={i} value={i}>
@@ -92,7 +92,7 @@ export default function VisualizerPanel({
               </option>
             ))}
           </select>
-          {simBusy && <span className="text-xs text-slate-400">simulating…</span>}
+          {simBusy && <span className="text-xs text-zinc-400">simulating…</span>}
         </div>
       )}
 
@@ -103,7 +103,7 @@ export default function VisualizerPanel({
       )}
 
       {/* Algorithm / Step-through toggle */}
-      <div className="inline-flex rounded-md border border-slate-700 bg-slate-800/40 p-0.5 mb-4">
+      <div className="inline-flex rounded-md border border-zinc-700 bg-zinc-800/40 p-0.5 mb-4">
         <ViewButton
           active={effectiveView === "algorithm"}
           disabled={!hasAlgorithm}
@@ -122,7 +122,7 @@ export default function VisualizerPanel({
       ) : hasDebugger ? (
         <DebuggerVisualizer trace={viz.debuggerTrace!} />
       ) : (
-        <div className="text-sm text-slate-400">{viz.unsupportedReason ?? "No visualization for this view."}</div>
+        <div className="text-sm text-zinc-400">{viz.unsupportedReason ?? "No visualization for this view."}</div>
       )}
     </div>
   );
@@ -156,7 +156,7 @@ function ViewButton({
       disabled={disabled}
       title={title}
       className={`px-3 py-1 rounded text-xs font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-        active ? "bg-emerald-600 text-slate-950" : "text-slate-300 hover:text-slate-100"
+        active ? "bg-emerald-600 text-zinc-950" : "text-zinc-300 hover:text-zinc-100"
       }`}
     >
       {children}

@@ -12,7 +12,7 @@ export default async function NewProblemPage() {
 
   return (
     <div className="max-w-[1600px] mx-auto px-6 py-8">
-      <Link href="/admin" className="text-sm text-slate-400 hover:text-slate-200">
+      <Link href="/admin" className="text-sm text-zinc-400 hover:text-zinc-200">
         ← Admin
       </Link>
       <h1 className="text-xl font-semibold mt-4 mb-5">New problem</h1>

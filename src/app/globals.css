@@ -12,27 +12,30 @@ body {
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  @apply antialiased;
+  /* Comfortable neutral dark (LeetCode-ish) rather than a harsh near-black. */
+  background-color: #1a1a1c;
+  color: #e4e4e7;
 }
 
 /* Minimal markdown styling for problem descriptions. */
 .prose-dsa h1,
 .prose-dsa h2,
 .prose-dsa h3 {
-  @apply font-semibold text-slate-100 mt-4 mb-2;
+  @apply font-semibold text-zinc-100 mt-4 mb-2;
 }
 .prose-dsa p {
-  @apply my-2 leading-relaxed text-slate-300;
+  @apply my-2 leading-relaxed text-zinc-300;
 }
 .prose-dsa code {
-  @apply bg-slate-800 text-emerald-300 px-1 py-0.5 rounded text-sm font-mono;
+  @apply bg-zinc-800 text-emerald-300 px-1 py-0.5 rounded text-sm font-mono;
 }
 .prose-dsa pre {
-  @apply bg-slate-900 border border-slate-800 rounded-lg p-3 my-3 overflow-x-auto text-sm;
+  @apply bg-zinc-900 border border-zinc-800 rounded-lg p-3 my-3 overflow-x-auto text-sm;
 }
 .prose-dsa pre code {
-  @apply bg-transparent p-0 text-slate-200;
+  @apply bg-transparent p-0 text-zinc-200;
 }
 .prose-dsa strong {
-  @apply text-slate-100 font-semibold;
+  @apply text-zinc-100 font-semibold;
 }

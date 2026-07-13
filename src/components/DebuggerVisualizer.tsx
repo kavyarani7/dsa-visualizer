@@ -78,7 +78,7 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
 
   if (total === 0) {
     return (
-      <div className="text-sm text-slate-400">
+      <div className="text-sm text-zinc-400">
         {trace.note ?? "No step-through was recorded for this program."}
       </div>
     );
@@ -114,7 +114,7 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
         </svg>
 
         {/* Source with current line highlighted */}
-        <div className="rounded-md border border-slate-800 bg-slate-950/60 overflow-hidden text-xs font-mono">
+        <div className="rounded-md border border-zinc-800 bg-zinc-950/60 overflow-hidden text-xs font-mono">
           {sourceLines.map((line, i) => {
             const n = i + 1;
             const active = n === activeLine;
@@ -125,13 +125,13 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
               >
                 <span
                   className={`select-none w-9 shrink-0 text-right pr-2 py-0.5 ${
-                    active ? "text-emerald-300" : "text-slate-500"
+                    active ? "text-emerald-300" : "text-zinc-500"
                   }`}
                   style={active ? {} : { color: "#94a3b8" }}
                 >
                   {n}
                 </span>
-                <span className={`pl-2 py-0.5 whitespace-pre ${active ? "text-slate-100" : "text-slate-300"}`}>
+                <span className={`pl-2 py-0.5 whitespace-pre ${active ? "text-zinc-100" : "text-zinc-300"}`}>
                   {active ? "▶ " : "  "}
                   {line || " "}
                 </span>
@@ -143,7 +143,7 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
         {/* Stack + heap */}
         <div className="space-y-4" style={{ zIndex: 10 }}>
           <div>
-            <div className="text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
+            <div className="text-[11px] font-semibold text-zinc-400 mb-1.5 uppercase tracking-wide">
               Call stack
             </div>
             <div className="space-y-2">
@@ -155,21 +155,21 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
                     className={`rounded-md border px-2.5 py-1.5 ${
                       isTop
                         ? "border-emerald-500/40 bg-emerald-500/10"
-                        : "border-slate-700 bg-slate-800/40"
+                        : "border-zinc-700 bg-zinc-800/40"
                     }`}
                   >
-                    <div className={`text-[11px] font-mono mb-1 ${isTop ? "text-emerald-300" : "text-slate-400"}`}>
+                    <div className={`text-[11px] font-mono mb-1 ${isTop ? "text-emerald-300" : "text-zinc-400"}`}>
                       {frame.fn}()
                     </div>
                     {frame.locals.length === 0 ? (
-                      <div className="text-[11px] text-slate-500">no locals</div>
+                      <div className="text-[11px] text-zinc-500">no locals</div>
                     ) : (
                       <table className="text-xs font-mono">
                         <tbody>
                           {frame.locals.map((l) => (
                             <tr key={l.name}>
                               <td className="text-sky-300 pr-2 align-top">{l.name}</td>
-                              <td className="text-slate-500 pr-1 align-top">=</td>
+                              <td className="text-zinc-500 pr-1 align-top">=</td>
                               <td className="align-top">
                                 <SlotValue v={l.value} />
                               </td>
@@ -186,7 +186,7 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
 
           {current && current.heap.length > 0 && (
             <div>
-              <div className="text-[11px] font-semibold text-slate-400 mb-1.5 uppercase tracking-wide">
+              <div className="text-[11px] font-semibold text-zinc-400 mb-1.5 uppercase tracking-wide">
                 Objects (heap)
               </div>
               <div className="flex flex-col gap-2">
@@ -199,7 +199,7 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
         </div>
       </div>
 
-      <div className="mt-3 min-h-[18px] text-xs text-slate-400 font-mono">
+      <div className="mt-3 min-h-[18px] text-xs text-zinc-400 font-mono">
         line {activeLine} · step {step + 1}/{total}
         {trace.note ? ` · ${trace.note}` : ""}
       </div>
@@ -231,12 +231,12 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
 }
 
 function SlotValue({ v }: { v: SerializedValue }) {
-  if (v.kind === "uninit") return <span className="text-slate-400 italic">uninitialized</span>;
+  if (v.kind === "uninit") return <span className="text-zinc-400 italic">uninitialized</span>;
   if (v.kind === "fn") return <span className="text-sky-300">ƒ {v.name}</span>;
   if (v.kind === "prim") {
     const isString = v.value.startsWith('"');
     const isNullish = v.value === "null" || v.value === "undefined";
-    const cls = isNullish ? "text-slate-400" : isString ? "text-amber-300" : "text-emerald-300";
+    const cls = isNullish ? "text-zinc-400" : isString ? "text-amber-300" : "text-emerald-300";
     return <span className={cls}>{v.value}</span>;
   }
   // reference → anchor for an arrow
@@ -246,7 +246,7 @@ function SlotValue({ v }: { v: SerializedValue }) {
       className="inline-flex items-center gap-1 rounded border border-sky-500/50 bg-sky-500/10 px-1 text-[10px] text-sky-300"
       title={`reference to object #${v.id}`}
     >
-      ●<span className="text-slate-400">#{v.id}</span>
+      ●<span className="text-zinc-400">#{v.id}</span>
     </span>
   );
 }
@@ -255,9 +255,9 @@ function HeapBox({ obj }: { obj: HeapObject }) {
   return (
     <div
       data-heap-id={obj.id}
-      className="rounded-md border border-slate-700 bg-slate-800/50 px-2 py-1.5 w-fit max-w-full"
+      className="rounded-md border border-zinc-700 bg-zinc-800/50 px-2 py-1.5 w-fit max-w-full"
     >
-      <div className="text-[10px] text-slate-400 mb-1 font-mono">
+      <div className="text-[10px] text-zinc-400 mb-1 font-mono">
         {obj.type}
         {obj.length !== undefined ? `(${obj.length})` : ""} #{obj.id}
       </div>
@@ -265,21 +265,21 @@ function HeapBox({ obj }: { obj: HeapObject }) {
         <div className="flex flex-wrap gap-1">
           {obj.entries.map((e) => (
             <div key={e.key} className="flex flex-col items-center">
-              <div className="min-w-[28px] px-1.5 py-1 rounded border border-slate-600 bg-slate-900/60 text-xs font-mono text-center">
+              <div className="min-w-[28px] px-1.5 py-1 rounded border border-zinc-600 bg-zinc-800/50 text-xs font-mono text-center">
                 <SlotValue v={e.value} />
               </div>
-              <div className="text-[9px] text-slate-500 tabular-nums">{e.key}</div>
+              <div className="text-[9px] text-zinc-500 tabular-nums">{e.key}</div>
             </div>
           ))}
-          {obj.truncated && <div className="text-[10px] text-slate-500 self-center">…</div>}
+          {obj.truncated && <div className="text-[10px] text-zinc-500 self-center">…</div>}
         </div>
       ) : (
         <table className="text-xs font-mono">
           <tbody>
             {obj.entries.map((e) => (
               <tr key={e.key}>
-                <td className="text-slate-300 pr-2 align-top">{e.key}</td>
-                <td className="text-slate-500 pr-1 align-top">:</td>
+                <td className="text-zinc-300 pr-2 align-top">{e.key}</td>
+                <td className="text-zinc-500 pr-1 align-top">:</td>
                 <td className="align-top">
                   <SlotValue v={e.value} />
                 </td>
@@ -287,7 +287,7 @@ function HeapBox({ obj }: { obj: HeapObject }) {
             ))}
             {obj.truncated && (
               <tr>
-                <td className="text-slate-500">…</td>
+                <td className="text-zinc-500">…</td>
               </tr>
             )}
           </tbody>

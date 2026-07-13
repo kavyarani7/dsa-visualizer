@@ -22,7 +22,7 @@ export default async function AdminPage() {
 
   return (
     <div className="max-w-[1600px] mx-auto px-6 py-8">
-      <Link href="/" className="text-sm text-slate-400 hover:text-slate-200">
+      <Link href="/" className="text-sm text-zinc-400 hover:text-zinc-200">
         ← Back to site
       </Link>
       <div className="mt-4">

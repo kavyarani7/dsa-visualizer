@@ -26,7 +26,7 @@ export default function PlaybackControls({
       <div className="flex items-center gap-2">
         <button
           onClick={onReset}
-          className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs"
+          className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-xs"
           title="Reset"
         >
           ⏮
@@ -34,7 +34,7 @@ export default function PlaybackControls({
         <button
           onClick={() => onStep(-1)}
           disabled={step <= 0}
-          className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs disabled:opacity-40"
+          className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-xs disabled:opacity-40"
           title="Step back"
         >
           ◀
@@ -48,20 +48,20 @@ export default function PlaybackControls({
         <button
           onClick={() => onStep(1)}
           disabled={step >= total - 1}
-          className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-xs disabled:opacity-40"
+          className="px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-xs disabled:opacity-40"
           title="Step forward"
         >
           ▶
         </button>
-        <span className="text-xs text-slate-400 ml-1 tabular-nums">
+        <span className="text-xs text-zinc-400 ml-1 tabular-nums">
           step {total === 0 ? 0 : step + 1} / {total}
         </span>
-        <div className="ml-auto flex items-center gap-1 text-xs text-slate-400">
+        <div className="ml-auto flex items-center gap-1 text-xs text-zinc-400">
           speed
           <select
             value={speed}
             onChange={(e) => onSpeed(Number(e.target.value))}
-            className="bg-slate-800 rounded px-1 py-0.5 text-slate-200"
+            className="bg-zinc-800 rounded px-1 py-0.5 text-zinc-200"
           >
             <option value={1600}>0.5×</option>
             <option value={800}>1×</option>

@@ -96,14 +96,14 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
   return (
     <div className="mt-4 grid lg:grid-cols-2 gap-6 items-stretch">
       {/* Left: tabbed panel — Problem · Test Cases · Visualizer */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/30 overflow-hidden flex flex-col">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-800/40 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="px-4 pt-4 pb-3 border-b border-slate-800/70">
+        <div className="px-4 pt-4 pb-3 border-b border-zinc-800/70">
           <div className="flex items-center gap-3">
-            <h1 className="text-lg font-semibold text-slate-100">{problem.title}</h1>
-            <span className="text-xs text-slate-300">{problem.difficulty}</span>
+            <h1 className="text-lg font-semibold text-zinc-100">{problem.title}</h1>
+            <span className="text-xs text-zinc-300">{problem.difficulty}</span>
           </div>
-          <div className="text-xs text-slate-400 mt-1 font-mono">
+          <div className="text-xs text-zinc-400 mt-1 font-mono">
             function <span className="text-emerald-300">{problem.functionName}</span>(…) ·{" "}
             {problem.totalCases} test cases
           </div>
@@ -113,7 +113,7 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
                 <Link
                   key={t.slug}
                   href={`/topics/${t.slug}`}
-                  className="text-[11px] px-2 py-0.5 rounded-full border border-slate-700 bg-slate-800 text-slate-300 hover:border-emerald-500/50 hover:text-emerald-300 transition-colors"
+                  className="text-[11px] px-2 py-0.5 rounded-full border border-zinc-700 bg-zinc-800 text-zinc-300 hover:border-emerald-500/50 hover:text-emerald-300 transition-colors"
                 >
                   {t.name}
                 </Link>
@@ -123,7 +123,7 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
         </div>
 
         {/* Tab bar */}
-        <div className="flex items-center gap-1 px-2 border-b border-slate-800 bg-slate-900/40">
+        <div className="flex items-center gap-1 px-2 border-b border-zinc-800 bg-zinc-800/40">
           <TabButton active={tab === "problem"} onClick={() => setTab("problem")}>
             Problem
           </TabButton>
@@ -160,7 +160,7 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
               {result ? (
                 <TestResults status={result.status} results={result.results} mode={result.mode} />
               ) : (
-                <div className="text-sm text-slate-400">
+                <div className="text-sm text-zinc-400">
                   Run your solution to see results (samples{customCases.length ? " + your custom cases" : ""}).
                 </div>
               )}
@@ -189,16 +189,16 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
       </div>
 
       {/* Right: solution editor panel (mirrors the left panel structure) */}
-      <div className="rounded-xl border border-slate-800 bg-slate-900/30 overflow-hidden flex flex-col">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-800/40 overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="px-4 pt-4 pb-3 border-b border-slate-800/70 flex items-start justify-between gap-3">
+        <div className="px-4 pt-4 pb-3 border-b border-zinc-800/70 flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-slate-100">Your Solution</h2>
-            <div className="text-xs text-slate-400 mt-1 font-mono">
+            <h2 className="text-lg font-semibold text-zinc-100">Your Solution</h2>
+            <div className="text-xs text-zinc-400 mt-1 font-mono">
               write JavaScript · runs in a sandboxed judge
             </div>
           </div>
-          <span className="text-xs px-2 py-0.5 rounded-full border border-slate-700 bg-slate-800 text-slate-200 whitespace-nowrap">
+          <span className="text-xs px-2 py-0.5 rounded-full border border-zinc-700 bg-zinc-800 text-zinc-200 whitespace-nowrap">
             JavaScript
           </span>
         </div>
@@ -209,19 +209,19 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
         </div>
 
         {/* Footer: actions */}
-        <div className="px-4 py-3 border-t border-slate-800/70 space-y-3">
+        <div className="px-4 py-3 border-t border-zinc-800/70 space-y-3">
           <div className="flex items-center gap-2">
             <button
               onClick={() => execute("run")}
               disabled={busy !== null}
-              className="px-4 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-100 text-sm font-medium disabled:opacity-50"
+              className="px-4 py-1.5 rounded-md bg-zinc-800 hover:bg-zinc-700 text-zinc-100 text-sm font-medium disabled:opacity-50"
             >
               {busy === "run" ? "Running…" : "Run (samples)"}
             </button>
             <button
               onClick={() => execute("submit")}
               disabled={busy !== null}
-              className="px-4 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-sm font-semibold disabled:opacity-50"
+              className="px-4 py-1.5 rounded-md bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-semibold disabled:opacity-50"
             >
               {busy === "submit" ? "Submitting…" : "Submit"}
             </button>
@@ -233,7 +233,7 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
                 setTab("problem");
               }}
               disabled={busy !== null}
-              className="ml-auto px-3 py-1.5 rounded-md text-xs text-slate-300 hover:text-slate-100 disabled:opacity-50"
+              className="ml-auto px-3 py-1.5 rounded-md text-xs text-zinc-300 hover:text-zinc-100 disabled:opacity-50"
             >
               Reset code
             </button>
@@ -264,8 +264,8 @@ function TabButton({
       onClick={onClick}
       className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
         active
-          ? "border-emerald-500 text-slate-100"
-          : "border-transparent text-slate-400 hover:text-slate-200"
+          ? "border-emerald-500 text-zinc-100"
+          : "border-transparent text-zinc-400 hover:text-zinc-200"
       }`}
     >
       {children}
@@ -275,7 +275,7 @@ function TabButton({
 
 function EmptyState({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-center h-[360px] text-center text-sm text-slate-400 px-6">
+    <div className="flex items-center justify-center h-[360px] text-center text-sm text-zinc-400 px-6">
       <p className="max-w-sm">{children}</p>
     </div>
   );
@@ -292,21 +292,21 @@ function fmtVal(v: unknown): string {
 function SampleCasesList({ cases }: { cases: { input: unknown[]; expected: unknown }[] }) {
   if (cases.length === 0) return null;
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-3">
-      <div className="text-xs font-semibold text-slate-300 uppercase tracking-wide mb-2">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-800/40 p-3">
+      <div className="text-xs font-semibold text-zinc-300 uppercase tracking-wide mb-2">
         Sample test cases
       </div>
       <div className="space-y-2">
         {cases.map((c, i) => (
           <div key={i} className="text-xs font-mono">
-            <div className="text-slate-400 mb-0.5">Sample {i + 1}</div>
+            <div className="text-zinc-400 mb-0.5">Sample {i + 1}</div>
             <div className="ml-3 space-y-0.5">
               <div>
-                <span className="text-slate-500">input:</span>{" "}
-                <span className="text-slate-200">{fmtVal(c.input)}</span>
+                <span className="text-zinc-500">input:</span>{" "}
+                <span className="text-zinc-200">{fmtVal(c.input)}</span>
               </div>
               <div>
-                <span className="text-slate-500">expected:</span>{" "}
+                <span className="text-zinc-500">expected:</span>{" "}
                 <span className="text-emerald-300">{fmtVal(c.expected)}</span>
               </div>
             </div>
@@ -318,7 +318,7 @@ function SampleCasesList({ cases }: { cases: { input: unknown[]; expected: unkno
 }
 
 const caseInputCls =
-  "w-full rounded bg-slate-800 border border-slate-700 px-2 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-emerald-500";
+  "w-full rounded bg-zinc-800 border border-zinc-700 px-2 py-1.5 text-xs font-mono text-zinc-100 focus:outline-none focus:border-emerald-500";
 
 function CustomCasesEditor({
   cases,
@@ -331,29 +331,29 @@ function CustomCasesEditor({
     onChange(cases.map((c, j) => (j === i ? { ...c, ...patch } : c)));
 
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-3">
+    <div className="rounded-lg border border-zinc-800 bg-zinc-800/40 p-3">
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Your test cases</span>
+        <span className="text-xs font-semibold text-zinc-300 uppercase tracking-wide">Your test cases</span>
         <button
           onClick={() => onChange([...cases, { inputJson: "", expectedJson: "" }])}
           disabled={cases.length >= 20}
-          className="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-40"
+          className="text-xs px-2 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200 disabled:opacity-40"
         >
           + Add case
         </button>
       </div>
-      <p className="text-[11px] text-slate-400 mb-2">
-        Anyone can add cases here — they run when you hit <span className="text-slate-300">Run</span>, and appear
-        in the Visualizer&apos;s input picker. <span className="text-slate-300">input</span> is a JSON array of
+      <p className="text-[11px] text-zinc-400 mb-2">
+        Anyone can add cases here — they run when you hit <span className="text-zinc-300">Run</span>, and appear
+        in the Visualizer&apos;s input picker. <span className="text-zinc-300">input</span> is a JSON array of
         arguments (e.g. <code className="text-emerald-300">[[2,7,11,15], 9]</code>).
       </p>
       {cases.length === 0 ? (
-        <div className="text-[11px] text-slate-500">No custom cases yet.</div>
+        <div className="text-[11px] text-zinc-500">No custom cases yet.</div>
       ) : (
         <div className="space-y-1.5">
           {cases.map((c, i) => (
             <div key={i} className="grid grid-cols-[auto_1fr_1fr_auto] gap-1.5 items-center">
-              <span className="text-[10px] text-slate-500 w-12">Custom {i + 1}</span>
+              <span className="text-[10px] text-zinc-500 w-12">Custom {i + 1}</span>
               <input
                 className={caseInputCls}
                 value={c.inputJson}
@@ -368,7 +368,7 @@ function CustomCasesEditor({
               />
               <button
                 onClick={() => onChange(cases.filter((_, j) => j !== i))}
-                className="text-xs text-slate-500 hover:text-rose-300 px-1"
+                className="text-xs text-zinc-500 hover:text-rose-300 px-1"
                 title="Remove"
               >
                 ✕
