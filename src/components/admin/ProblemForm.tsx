@@ -30,6 +30,15 @@ interface CaseRow {
 const inputCls =
   "w-full rounded-md bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500";
 
+/** Pull the first function name out of starter code, e.g. "function maxProfit(" → "maxProfit". */
+function deriveFnName(code: string): string | null {
+  const m = code.match(/function\s+([A-Za-z_$][\w$]*)\s*\(/);
+  if (m) return m[1];
+  // also handle `const fn = (…) =>` / `const fn = function`
+  const m2 = code.match(/(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:function|\()/);
+  return m2 ? m2[1] : null;
+}
+
 export default function ProblemForm({
   topics,
   initial,
@@ -45,6 +54,8 @@ export default function ProblemForm({
   const [difficulty, setDifficulty] = useState(initial?.difficulty ?? "Medium");
   const [patternHint, setPatternHint] = useState(initial?.patternHint ?? "unknown");
   const [functionName, setFunctionName] = useState(initial?.functionName ?? "");
+  // Once the admin types in the Function name field, stop auto-filling it.
+  const [fnTouched, setFnTouched] = useState(Boolean(initial?.functionName));
   const [description, setDescription] = useState(initial?.description ?? "");
   const [starterCode, setStarterCode] = useState(initial?.starterCode ?? "");
   const [selected, setSelected] = useState<Set<string>>(new Set(initial?.topicSlugs ?? []));
@@ -79,7 +90,7 @@ export default function ProblemForm({
       slug,
       difficulty,
       patternHint,
-      functionName,
+      functionName: functionName.trim() || deriveFnName(starterCode) || "",
       description,
       starterCode,
       topics: [...selected],
@@ -123,7 +134,15 @@ export default function ProblemForm({
           </select>
         </Field>
         <Field label="Function name (the judge calls this)">
-          <input className={inputCls} value={functionName} onChange={(e) => setFunctionName(e.target.value)} placeholder="twoSum" />
+          <input
+            className={inputCls}
+            value={functionName}
+            onChange={(e) => {
+              setFnTouched(true);
+              setFunctionName(e.target.value);
+            }}
+            placeholder="twoSum (auto-filled from starter code)"
+          />
         </Field>
         <Field label="Pattern hint (only two_pointer / bfs get the algorithm animation)">
           <select className={inputCls} value={patternHint} onChange={(e) => setPatternHint(e.target.value)}>
@@ -161,7 +180,21 @@ export default function ProblemForm({
       </Field>
 
       <Field label="Starter code (JavaScript)">
-        <textarea className={`${inputCls} font-mono min-h-[160px]`} value={starterCode} onChange={(e) => setStarterCode(e.target.value)} placeholder={"function twoSum(numbers, target) {\n  \n}"} />
+        <textarea
+          className={`${inputCls} font-mono min-h-[160px]`}
+          value={starterCode}
+          onChange={(e) => {
+            const v = e.target.value;
+            setStarterCode(v);
+            // Auto-fill the function name from the starter code until the user
+            // edits it themselves.
+            if (!fnTouched) {
+              const d = deriveFnName(v);
+              if (d) setFunctionName(d);
+            }
+          }}
+          placeholder={"function twoSum(numbers, target) {\n  \n}"}
+        />
       </Field>
 
       <div>
