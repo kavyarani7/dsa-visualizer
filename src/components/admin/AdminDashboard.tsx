@@ -28,6 +28,28 @@ export default function AdminDashboard({
   const [newTopic, setNewTopic] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function deleteProblem(p: ProblemRow) {
+    if (!window.confirm(`Delete "${p.title}"? This removes the problem, its test cases, and submissions. This cannot be undone.`)) {
+      return;
+    }
+    setDeletingId(p.id);
+    setError(null);
+    try {
+      const res = await fetch(`/api/admin/problems/${p.id}`, { method: "DELETE" });
+      if (res.ok) {
+        router.refresh();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? "Failed to delete problem");
+      }
+    } catch {
+      setError("Network error");
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   async function addTopic(e: React.FormEvent) {
     e.preventDefault();
@@ -120,6 +142,13 @@ export default function AdminDashboard({
                   <Link href={`/admin/problems/${p.id}/edit`} className="text-emerald-400 hover:text-emerald-300">
                     edit
                   </Link>
+                  <button
+                    onClick={() => deleteProblem(p)}
+                    disabled={deletingId === p.id}
+                    className="text-rose-400 hover:text-rose-300 disabled:opacity-50"
+                  >
+                    {deletingId === p.id ? "deleting…" : "delete"}
+                  </button>
                 </div>
               </li>
             ))}
