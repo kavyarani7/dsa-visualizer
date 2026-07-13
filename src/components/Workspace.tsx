@@ -155,6 +155,7 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
 
           {tab === "tests" && (
             <div className="space-y-4">
+              <SampleCasesList cases={problem.sampleCases} />
               <CustomCasesEditor cases={customCases} onChange={setCustomCases} />
               {result ? (
                 <TestResults status={result.status} results={result.results} mode={result.mode} />
@@ -276,6 +277,42 @@ function EmptyState({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-center h-[360px] text-center text-sm text-slate-400 px-6">
       <p className="max-w-sm">{children}</p>
+    </div>
+  );
+}
+
+function fmtVal(v: unknown): string {
+  try {
+    return JSON.stringify(v);
+  } catch {
+    return String(v);
+  }
+}
+
+function SampleCasesList({ cases }: { cases: { input: unknown[]; expected: unknown }[] }) {
+  if (cases.length === 0) return null;
+  return (
+    <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-3">
+      <div className="text-xs font-semibold text-slate-300 uppercase tracking-wide mb-2">
+        Sample test cases
+      </div>
+      <div className="space-y-2">
+        {cases.map((c, i) => (
+          <div key={i} className="text-xs font-mono">
+            <div className="text-slate-400 mb-0.5">Sample {i + 1}</div>
+            <div className="ml-3 space-y-0.5">
+              <div>
+                <span className="text-slate-500">input:</span>{" "}
+                <span className="text-slate-200">{fmtVal(c.input)}</span>
+              </div>
+              <div>
+                <span className="text-slate-500">expected:</span>{" "}
+                <span className="text-emerald-300">{fmtVal(c.expected)}</span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
