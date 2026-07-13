@@ -5,6 +5,7 @@ export interface JudgeTestCase {
   isSample: boolean;
   input: unknown[]; // positional args passed to the function
   expected: unknown;
+  custom?: boolean;
 }
 
 export interface JudgeInput {

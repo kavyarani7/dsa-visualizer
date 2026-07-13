@@ -133,6 +133,8 @@ export interface TestRunResult {
   stdout: string;
   error: string | null;
   durationMs: number;
+  /** True for a user-supplied ("run your own") test case. */
+  custom?: boolean;
 }
 
 export type SubmissionStatus = "pending" | "passed" | "failed" | "error";
