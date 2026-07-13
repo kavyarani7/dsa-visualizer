@@ -60,6 +60,7 @@ async function runOne(
       result: {
         ordinal: tc.ordinal,
         isSample: tc.isSample,
+        custom: tc.custom ?? false,
         input: tc.input,
         expected: tc.expected,
         actual: null,
@@ -80,6 +81,7 @@ async function runOne(
       result: {
         ordinal: tc.ordinal,
         isSample: tc.isSample,
+        custom: tc.custom ?? false,
         input: tc.input,
         expected: tc.expected,
         actual: null,
@@ -97,6 +99,7 @@ async function runOne(
     result: {
       ordinal: tc.ordinal,
       isSample: tc.isSample,
+      custom: tc.custom ?? false,
       input: tc.input,
       expected: tc.expected,
       actual: parsed.ok ? parsed.result : null,

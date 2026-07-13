@@ -13,6 +13,15 @@ export default async function ProblemPage({ params }: { params: { id: string } }
   if (!problem) notFound();
 
   const totalCases = await prisma.testCase.count({ where: { problemId: problem.id } });
+  const sampleRows = await prisma.testCase.findMany({
+    where: { problemId: problem.id, isSample: true },
+    orderBy: { ordinal: "asc" },
+    select: { inputJson: true, expectedJson: true },
+  });
+  const sampleCases = sampleRows.map((r) => ({
+    input: JSON.parse(r.inputJson) as unknown[],
+    expected: JSON.parse(r.expectedJson) as unknown,
+  }));
 
   return (
     <div className="max-w-[1600px] mx-auto px-6 py-6">
@@ -31,6 +40,7 @@ export default async function ProblemPage({ params }: { params: { id: string } }
           starterCode: problem.starterCode,
           totalCases,
           topics: problem.topics,
+          sampleCases,
         }}
       />
     </div>

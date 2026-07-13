@@ -47,7 +47,10 @@ export default function TestResults({
                 {r.passed ? "✓" : "✗"}
               </span>
               <span className="text-slate-400">
-                Case {r.ordinal + 1} {r.isSample ? "" : "(hidden)"} · {r.durationMs}ms
+                {r.custom
+                  ? `Custom ${r.ordinal - 999}`
+                  : `Case ${r.ordinal + 1}${r.isSample ? "" : " (hidden)"}`}{" "}
+                · {r.durationMs}ms
               </span>
             </div>
             {!r.passed && (

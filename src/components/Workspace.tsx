@@ -19,6 +19,12 @@ interface ProblemProps {
   starterCode: string;
   totalCases: number;
   topics: { slug: string; name: string }[];
+  sampleCases: { input: unknown[]; expected: unknown }[];
+}
+
+interface CustomCase {
+  inputJson: string;
+  expectedJson: string;
 }
 
 interface RunResponse {
@@ -37,10 +43,27 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RunResponse | null>(null);
   const [tab, setTab] = useState<TabKey>("problem");
+  const [customCases, setCustomCases] = useState<CustomCase[]>([]);
 
   const hasVisualization =
     result?.mode === "submit" && result.status === "passed" && !!result.visualization;
   const passedCount = result?.results.filter((r) => r.passed).length ?? 0;
+
+  // Inputs the visualizer can simulate: every sample case, plus any custom case
+  // whose input is valid JSON.
+  const simCases: { label: string; input: unknown[] }[] = [
+    ...problem.sampleCases.map((c, i) => ({ label: `Sample ${i + 1}`, input: c.input })),
+    ...customCases
+      .map((c, i) => {
+        try {
+          const parsed = JSON.parse(c.inputJson);
+          return Array.isArray(parsed) ? { label: `Custom ${i + 1}`, input: parsed as unknown[] } : null;
+        } catch {
+          return null;
+        }
+      })
+      .filter((x): x is { label: string; input: unknown[] } => x !== null),
+  ];
 
   async function execute(mode: "run" | "submit") {
     setBusy(mode);
@@ -49,7 +72,7 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
       const res = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ problemId: problem.id, sourceCode: code, mode }),
+        body: JSON.stringify({ problemId: problem.id, sourceCode: code, mode, customCases }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -130,16 +153,27 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
         <div className="p-4 flex-1 min-h-[440px]">
           {tab === "problem" && <Markdown>{problem.description}</Markdown>}
 
-          {tab === "tests" &&
-            (result ? (
-              <TestResults status={result.status} results={result.results} mode={result.mode} />
-            ) : (
-              <EmptyState>Run or submit your solution to see test results here.</EmptyState>
-            ))}
+          {tab === "tests" && (
+            <div className="space-y-4">
+              <CustomCasesEditor cases={customCases} onChange={setCustomCases} />
+              {result ? (
+                <TestResults status={result.status} results={result.results} mode={result.mode} />
+              ) : (
+                <div className="text-sm text-slate-400">
+                  Run your solution to see results (samples{customCases.length ? " + your custom cases" : ""}).
+                </div>
+              )}
+            </div>
+          )}
 
           {tab === "visualizer" &&
             (hasVisualization ? (
-              <VisualizerPanel visualization={result!.visualization!} />
+              <VisualizerPanel
+                visualization={result!.visualization!}
+                problemId={problem.id}
+                sourceCode={code}
+                cases={simCases}
+              />
             ) : result?.mode === "submit" && result.status !== "passed" ? (
               <EmptyState>
                 Your solution didn&apos;t pass every test yet. Fix the failing cases and submit again
@@ -242,6 +276,70 @@ function EmptyState({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-center h-[360px] text-center text-sm text-slate-400 px-6">
       <p className="max-w-sm">{children}</p>
+    </div>
+  );
+}
+
+const caseInputCls =
+  "w-full rounded bg-slate-800 border border-slate-700 px-2 py-1.5 text-xs font-mono text-slate-100 focus:outline-none focus:border-emerald-500";
+
+function CustomCasesEditor({
+  cases,
+  onChange,
+}: {
+  cases: { inputJson: string; expectedJson: string }[];
+  onChange: (c: { inputJson: string; expectedJson: string }[]) => void;
+}) {
+  const update = (i: number, patch: Partial<{ inputJson: string; expectedJson: string }>) =>
+    onChange(cases.map((c, j) => (j === i ? { ...c, ...patch } : c)));
+
+  return (
+    <div className="rounded-lg border border-slate-800 bg-slate-900/40 p-3">
+      <div className="flex items-center justify-between mb-1.5">
+        <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Your test cases</span>
+        <button
+          onClick={() => onChange([...cases, { inputJson: "", expectedJson: "" }])}
+          disabled={cases.length >= 20}
+          className="text-xs px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 disabled:opacity-40"
+        >
+          + Add case
+        </button>
+      </div>
+      <p className="text-[11px] text-slate-400 mb-2">
+        Anyone can add cases here — they run when you hit <span className="text-slate-300">Run</span>, and appear
+        in the Visualizer&apos;s input picker. <span className="text-slate-300">input</span> is a JSON array of
+        arguments (e.g. <code className="text-emerald-300">[[2,7,11,15], 9]</code>).
+      </p>
+      {cases.length === 0 ? (
+        <div className="text-[11px] text-slate-500">No custom cases yet.</div>
+      ) : (
+        <div className="space-y-1.5">
+          {cases.map((c, i) => (
+            <div key={i} className="grid grid-cols-[auto_1fr_1fr_auto] gap-1.5 items-center">
+              <span className="text-[10px] text-slate-500 w-12">Custom {i + 1}</span>
+              <input
+                className={caseInputCls}
+                value={c.inputJson}
+                onChange={(e) => update(i, { inputJson: e.target.value })}
+                placeholder="input e.g. [[2,7,11,15], 9]"
+              />
+              <input
+                className={caseInputCls}
+                value={c.expectedJson}
+                onChange={(e) => update(i, { expectedJson: e.target.value })}
+                placeholder="expected e.g. [1,2]"
+              />
+              <button
+                onClick={() => onChange(cases.filter((_, j) => j !== i))}
+                className="text-xs text-slate-500 hover:text-rose-300 px-1"
+                title="Remove"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

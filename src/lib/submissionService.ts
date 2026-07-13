@@ -6,6 +6,11 @@ import type { SubmissionStatus, TestRunResult, VisualizationPayload } from "./ty
 
 export type RunMode = "run" | "submit";
 
+export interface CustomCase {
+  input: unknown[];
+  expected: unknown;
+}
+
 export interface RunOutput {
   mode: RunMode;
   status: SubmissionStatus;
@@ -28,7 +33,8 @@ function toStatus(allPassed: boolean, hadInfraError: boolean): SubmissionStatus 
 export async function runSubmission(
   problemId: string,
   sourceCode: string,
-  mode: RunMode
+  mode: RunMode,
+  customCases: CustomCase[] = []
 ): Promise<RunOutput> {
   const problem = await prisma.problem.findUnique({
     where: { id: problemId },
@@ -43,6 +49,20 @@ export async function runSubmission(
     input: JSON.parse(tc.inputJson) as unknown[],
     expected: JSON.parse(tc.expectedJson) as unknown,
   }));
+
+  // User-supplied cases run in "run" mode only — they never affect the official
+  // submit verdict (which is graded against the problem's own hidden tests).
+  if (mode === "run") {
+    customCases.forEach((c, i) => {
+      judgeCases.push({
+        ordinal: 1000 + i,
+        isSample: true,
+        custom: true,
+        input: c.input,
+        expected: c.expected,
+      });
+    });
+  }
 
   const judge = getJudge("javascript");
   const judged = await judge.run({
@@ -91,4 +111,29 @@ export async function runSubmission(
   }
 
   return { mode, status, results: judged.results, submissionId: submission.id, visualization };
+}
+
+/**
+ * Runs ONLY the visualization pipeline for a given input — no judging, no
+ * persistence. Powers the "simulate this test case" selector, so the user can
+ * watch the run on any sample or custom input without re-submitting.
+ */
+export async function visualizeInput(
+  problemId: string,
+  sourceCode: string,
+  input: unknown[]
+): Promise<VisualizationPayload> {
+  const problem = await prisma.problem.findUnique({
+    where: { id: problemId },
+    select: { id: true, functionName: true },
+  });
+  if (!problem) throw new Error("Problem not found");
+
+  return runPipeline({
+    submissionId: `sim-${Date.now()}`,
+    problemId,
+    sourceCode,
+    functionName: problem.functionName,
+    sampleInput: input,
+  });
 }
