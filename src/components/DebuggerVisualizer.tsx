@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import type { DebuggerStep, DebuggerTrace, HeapObject, SerializedValue } from "@/lib/types";
+import type { DebuggerStep, DebuggerTrace, DebuggerLogLine, HeapObject, SerializedValue } from "@/lib/types";
 import PlaybackControls from "./PlaybackControls";
 
 interface Arrow {
@@ -86,6 +86,10 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
 
   const sourceLines = trace.sourceCode.split("\n");
   const activeLine = current?.lineNo ?? -1;
+
+  // Reveal console output up to (and including) the current step.
+  const allLogs = trace.logs ?? [];
+  const visibleLogs = allLogs.filter((l) => l.afterStep <= step + 1);
 
   return (
     <div>
@@ -199,6 +203,24 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
         </div>
       </div>
 
+      {allLogs.length > 0 && (
+        <div className="mt-4">
+          <div className="text-[11px] font-semibold text-zinc-400 mb-1.5 uppercase tracking-wide">
+            Console
+            <span className="ml-2 font-normal normal-case tracking-normal text-zinc-500">
+              {visibleLogs.length}/{allLogs.length}
+            </span>
+          </div>
+          <div className="rounded-md border border-zinc-800 bg-zinc-950/60 px-3 py-2 max-h-40 overflow-y-auto text-xs font-mono">
+            {visibleLogs.length === 0 ? (
+              <span className="text-zinc-600">no output yet</span>
+            ) : (
+              visibleLogs.map((l, i) => <LogRow key={i} log={l} />)
+            )}
+          </div>
+        </div>
+      )}
+
       <div className="mt-3 min-h-[18px] text-xs text-zinc-400 font-mono">
         line {activeLine} · step {step + 1}/{total}
         {trace.note ? ` · ${trace.note}` : ""}
@@ -226,6 +248,23 @@ export default function DebuggerVisualizer({ trace }: { trace: DebuggerTrace }) 
           onSpeed={setSpeed}
         />
       </div>
+    </div>
+  );
+}
+
+function LogRow({ log }: { log: DebuggerLogLine }) {
+  const cls =
+    log.level === "error"
+      ? "text-rose-300"
+      : log.level === "warn"
+        ? "text-amber-300"
+        : "text-zinc-300";
+  return (
+    <div className={`whitespace-pre-wrap break-words leading-relaxed ${cls}`}>
+      {log.level !== "log" && (
+        <span className="mr-1.5 text-[10px] uppercase opacity-60">{log.level}</span>
+      )}
+      {log.text || " "}
     </div>
   );
 }

@@ -1,9 +1,10 @@
 import { runInSandbox } from "@/lib/judge/sandbox";
-import type { DebuggerStep } from "@/lib/types";
+import type { DebuggerStep, DebuggerLogLine } from "@/lib/types";
 import { instrumentForDebugger } from "./genericInstrument";
 
 export interface DebuggerRunResult {
   steps: DebuggerStep[];
+  logs: DebuggerLogLine[];
   programError: string | null;
   sandboxError: string | null;
 }
@@ -17,11 +18,13 @@ const RUNTIME_PRELUDE = `
 var __UNINIT = { __uninit: true };
 var __stack = [];
 var __events = [];
+var __logs = [];
 var __ids = new WeakMap();
 var __nid = 1;
 var __MAX_STEPS = 3000;
 var __MAX_ENTRIES = 200;
 var __MAX_PROPS = 60;
+var __MAX_LOGS = 1000;
 
 function __safe(getter) { try { return getter(); } catch (e) { return __UNINIT; } }
 function __enter(name) { __stack.push({ fn: name, raw: {}, line: 0 }); }
@@ -111,7 +114,23 @@ function __step(line, rawLocals) {
   if (__events.length > __MAX_STEPS) throw new Error("trace exceeded " + __MAX_STEPS + " steps");
 }
 
-var console = { log: function () {}, error: function () {}, warn: function () {}, info: function () {} };
+// Real console: capture each call's text and tag it with how many steps had
+// been recorded when it fired, so the UI can reveal output as you step through.
+function __logfmt(x) {
+  if (typeof x === "string") return x;
+  try { return JSON.stringify(x); } catch (e) { return String(x); }
+}
+function __capture(level) {
+  return function () {
+    if (__logs.length >= __MAX_LOGS) return;
+    __logs.push({
+      afterStep: __events.length,
+      level: level,
+      text: Array.prototype.map.call(arguments, __logfmt).join(" ")
+    });
+  };
+}
+var console = { log: __capture("log"), error: __capture("error"), warn: __capture("warn"), info: __capture("info") };
 `;
 
 function buildProgram(instrumentedCode: string, functionName: string, args: unknown[]): string {
@@ -125,9 +144,9 @@ globalThis.__out = (function () {
     if (typeof ${functionName} === "function") {
       ${functionName}.apply(null, __args);
     }
-    return JSON.stringify({ ok: true, events: __events, error: null });
+    return JSON.stringify({ ok: true, events: __events, logs: __logs, error: null });
   } catch (e) {
-    return JSON.stringify({ ok: false, events: __events, error: (e && e.message) ? e.message : String(e) });
+    return JSON.stringify({ ok: false, events: __events, logs: __logs, error: (e && e.message) ? e.message : String(e) });
   }
 })();
 `;
@@ -141,7 +160,7 @@ export async function runDebugger(
 ): Promise<DebuggerRunResult> {
   const instrumented = instrumentForDebugger(source);
   if (!instrumented.ok) {
-    return { steps: [], programError: null, sandboxError: "could not instrument source" };
+    return { steps: [], logs: [], programError: null, sandboxError: "could not instrument source" };
   }
 
   const program = buildProgram(instrumented.code, functionName, args);
@@ -151,17 +170,18 @@ export async function runDebugger(
   });
 
   if (!sb.ok || sb.outJson === null) {
-    return { steps: [], programError: null, sandboxError: sb.sandboxError ?? "execution failed" };
+    return { steps: [], logs: [], programError: null, sandboxError: sb.sandboxError ?? "execution failed" };
   }
 
   try {
     const parsed = JSON.parse(sb.outJson) as {
       ok: boolean;
       events: DebuggerStep[];
+      logs: DebuggerLogLine[];
       error: string | null;
     };
-    return { steps: parsed.events ?? [], programError: parsed.error, sandboxError: null };
+    return { steps: parsed.events ?? [], logs: parsed.logs ?? [], programError: parsed.error, sandboxError: null };
   } catch {
-    return { steps: [], programError: null, sandboxError: "could not parse debugger trace" };
+    return { steps: [], logs: [], programError: null, sandboxError: "could not parse debugger trace" };
   }
 }

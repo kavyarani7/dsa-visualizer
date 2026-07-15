@@ -113,10 +113,21 @@ export interface DebuggerStep {
   heap: HeapObject[];
 }
 
+/** One captured console.* call during the traced run. */
+export interface DebuggerLogLine {
+  /** Number of steps recorded when this log fired; the UI reveals the line
+   *  once the playhead has reached that step (accumulating stdout). */
+  afterStep: number;
+  level: "log" | "error" | "warn" | "info";
+  text: string;
+}
+
 export interface DebuggerTrace {
   /** The exact source that was instrumented (rendered line-by-line by the UI). */
   sourceCode: string;
   steps: DebuggerStep[];
+  /** console.* output captured during the run, in call order. */
+  logs?: DebuggerLogLine[];
   /** Set when tracing produced nothing usable (e.g. a runtime error). */
   note?: string;
 }

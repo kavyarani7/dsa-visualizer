@@ -182,6 +182,7 @@ export async function buildDebuggerTrace(state: PipelineStateType): Promise<Pipe
       debuggerTrace: {
         sourceCode: state.sourceCode,
         steps: [],
+        logs: run.logs,
         note: run.sandboxError ?? run.programError ?? "No steps were recorded for this run.",
       },
     };
@@ -190,6 +191,7 @@ export async function buildDebuggerTrace(state: PipelineStateType): Promise<Pipe
     debuggerTrace: {
       sourceCode: state.sourceCode,
       steps: run.steps,
+      logs: run.logs,
       note: run.programError
         ? `Program threw after ${run.steps.length} step(s): ${run.programError}`
         : undefined,
