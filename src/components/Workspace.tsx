@@ -39,11 +39,15 @@ type TabKey = "problem" | "tests" | "visualizer";
 
 export default function Workspace({ problem }: { problem: ProblemProps }) {
   const [code, setCode] = useState(problem.starterCode);
-  const [busy, setBusy] = useState<null | "run" | "submit">(null);
+  const [busy, setBusy] = useState<null | "run" | "submit" | "debug">(null);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RunResponse | null>(null);
   const [tab, setTab] = useState<TabKey>("problem");
   const [customCases, setCustomCases] = useState<CustomCase[]>([]);
+  // On-demand debug session: step through the CURRENT code against a chosen
+  // input regardless of whether it passes. Independent of submissions.
+  const [debugViz, setDebugViz] = useState<VisualizationPayload | null>(null);
+  const [debugCase, setDebugCase] = useState(0);
 
   const hasVisualization =
     result?.mode === "submit" && result.status === "passed" && !!result.visualization;
@@ -65,9 +69,37 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
       .filter((x): x is { label: string; input: unknown[] } => x !== null),
   ];
 
+  // Step through the current code against a chosen input, pass or fail.
+  async function debug(index: number) {
+    const target = simCases[index];
+    if (!target) return;
+    setBusy("debug");
+    setError(null);
+    setDebugCase(index);
+    try {
+      const res = await fetch("/api/visualize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ problemId: problem.id, sourceCode: code, input: target.input }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Debug failed");
+      } else {
+        setDebugViz(data.visualization as VisualizationPayload);
+        setTab("visualizer");
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Network error");
+    } finally {
+      setBusy(null);
+    }
+  }
+
   async function execute(mode: "run" | "submit") {
     setBusy(mode);
     setError(null);
+    setDebugViz(null);
     try {
       const res = await fetch("/api/submit", {
         method: "POST",
@@ -168,21 +200,27 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
           )}
 
           {tab === "visualizer" &&
-            (hasVisualization ? (
+            (debugViz ? (
+              <VisualizerPanel
+                visualization={debugViz}
+                problemId={problem.id}
+                sourceCode={code}
+                cases={simCases}
+                initialView="debugger"
+                initialCase={debugCase}
+              />
+            ) : hasVisualization ? (
               <VisualizerPanel
                 visualization={result!.visualization!}
                 problemId={problem.id}
                 sourceCode={code}
                 cases={simCases}
               />
-            ) : result?.mode === "submit" && result.status !== "passed" ? (
-              <EmptyState>
-                Your solution didn&apos;t pass every test yet. Fix the failing cases and submit again
-                to unlock the animated visualization.
-              </EmptyState>
             ) : (
               <EmptyState>
-                Submit a correct solution and the detected algorithm will animate here, step by step.
+                Hit <span className="text-zinc-200 font-medium">Debug</span> to step through your
+                current code line by line — call stack, variables and console, on any input, pass or
+                fail. Or submit a correct solution to unlock the animated algorithm view.
               </EmptyState>
             ))}
         </div>
@@ -226,9 +264,18 @@ export default function Workspace({ problem }: { problem: ProblemProps }) {
               {busy === "submit" ? "Submitting…" : "Submit"}
             </button>
             <button
+              onClick={() => debug(debugCase)}
+              disabled={busy !== null || simCases.length === 0}
+              title={simCases.length === 0 ? "No input available to debug" : "Step through your code"}
+              className="px-4 py-1.5 rounded-md bg-sky-600 hover:bg-sky-500 text-zinc-50 text-sm font-medium disabled:opacity-50"
+            >
+              {busy === "debug" ? "Tracing…" : "Debug"}
+            </button>
+            <button
               onClick={() => {
                 setCode(problem.starterCode);
                 setResult(null);
+                setDebugViz(null);
                 setError(null);
                 setTab("problem");
               }}

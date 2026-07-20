@@ -17,27 +17,34 @@ export default function VisualizerPanel({
   problemId,
   sourceCode,
   cases,
+  initialView = "algorithm",
+  initialCase = 0,
 }: {
   visualization: VisualizationPayload;
   problemId: string;
   sourceCode: string;
   cases: SimCase[];
+  /** Which view to open on first render. Debug sessions open on "debugger". */
+  initialView?: View;
+  /** Which sim-case index the incoming visualization corresponds to. */
+  initialCase?: number;
 }) {
   // Local, re-simulatable copy of the payload. Starts as the submit result
   // (which was traced on the first sample) and is replaced when the user picks
   // a different input to simulate.
   const [viz, setViz] = useState(visualization);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(initialCase);
   const [simBusy, setSimBusy] = useState(false);
   const [simError, setSimError] = useState<string | null>(null);
-  const [view, setView] = useState<View>("algorithm");
+  const [view, setView] = useState<View>(initialView);
 
-  // A fresh submission resets everything.
+  // A fresh submission (or debug session) resets everything.
   useEffect(() => {
     setViz(visualization);
-    setSelected(0);
+    setSelected(initialCase);
+    setView(initialView);
     setSimError(null);
-  }, [visualization]);
+  }, [visualization, initialCase, initialView]);
 
   const hasAlgorithm = !viz.unsupportedReason && viz.trace.length > 0;
   const hasDebugger = (viz.debuggerTrace?.steps.length ?? 0) > 0;
